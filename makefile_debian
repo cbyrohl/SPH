@@ -1,0 +1,13 @@
+CC=mpicc
+CLIBS= -lglfw -lGL -lGLU -lX11 -lGLEW -lXxf86vm -lXrandr -lXi -lfreetype -lm
+CINCLUDES= -I/usr/include/freetype2
+CFLAGS= -DGLFW -g -O0 -ffast-math -pg -I/usr/local/include -I/usr/include/libdrm -fcommon
+
+all:
+	mkdir -p bin
+	cd src; $(CC) $(CINCLUDES) $(CFLAGS) ogl_utils.c dividers_gl.c liquid_gl.c exit_menu_gl.c image_gl.c cursor_gl.c rectangle_gl.c lodepng.c background_gl.c font_gl.c glfw_utils.c particles_gl.c mover_gl.c controls.c renderer.c geometry.c hash.c communication.c fluid.c -o ../bin/sph.out  $(CLIBS)
+
+
+clean:
+	rm -f ./sph.out
+	rm -f ./*.o
