@@ -356,6 +356,14 @@ int start_renderer()
                 points[j*5+2] = colors_by_rank[3*current_rank];
                 points[j*5+3] = colors_by_rank[3*current_rank+1];
                 points[j*5+4] = colors_by_rank[3*current_rank+2];
+#ifdef DEBUG_PARTICLE7
+                if(j==7){
+                    // red red color
+                    points[j*5+2] = 0.7f;
+                    points[j*5+3] = 0.1f;
+                    points[j*5+4] = 0.1f;
+                }
+#endif
             }
 
             render_particles(points, particle_diameter_pixels, coords_recvd/2, &particle_GLstate);

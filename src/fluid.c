@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "mpi.h"
 #include "hash.h"
@@ -43,8 +44,15 @@ THE SOFTWARE.
 #include "blink1_light.h"
 #endif
 
+
+// debugging
+#include <fenv.h>
+
+
+
 int main(int argc, char *argv[])
 {
+    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
     int return_value;
 
     // Initialize MPI
@@ -273,7 +281,7 @@ void start_simulation()
         apply_gravity(fluid_particle_pointers, &params);
 
         // Viscosity impluse
-        viscosity_impluses(fluid_particle_pointers, neighbors, &params);
+        viscosity_impulses(fluid_particle_pointers, neighbors, &params);
 
         // Advance to predicted position and set OOB particles
         predict_positions(fluid_particle_pointers, &boundary_global, &params);
@@ -412,8 +420,8 @@ void apply_gravity(fluid_particle **fluid_particle_pointers, param *params)
      }
 }
 
-// Add viscosity impluses
-void viscosity_impluses(fluid_particle **fluid_particle_pointers, neighbor* neighbors, param *params)
+// Add viscosity impulses
+void viscosity_impulses(fluid_particle **fluid_particle_pointers, neighbor* neighbors, param *params)
 {
     int i, j, num_fluid;
     fluid_particle *p, *q;
@@ -441,7 +449,8 @@ void viscosity_impluses(fluid_particle **fluid_particle_pointers, neighbor* neig
 	
             QmP_x = (q->x-p_x);
             QmP_y = (q->y-p_y);
-            r = sqrt(QmP_x*QmP_x + QmP_y*QmP_y);
+            float eps2 = 1e-6f;
+            r = sqrt(QmP_x*QmP_x + QmP_y*QmP_y + eps2);
 
             r_recip = 1.0f/r;
             ratio = r*h_recip;
@@ -496,7 +505,7 @@ void identify_oob_particles(fluid_particle **fluid_particle_pointers, fluid_part
         else if (p->x > params->tunable_params.node_end_x)
             out_of_bounds->oob_pointer_indicies_right[out_of_bounds->number_oob_particles_right++] = i;
     }
- 
+
    // Transfer particles that have left the processor bounds
    transferOOBParticles(fluid_particle_pointers, fluid_particles, out_of_bounds, params);
 }
@@ -512,12 +521,32 @@ void predict_positions(fluid_particle **fluid_particle_pointers, AABB_t *boundar
 
     for(i=0; i<params->number_fluid_particles_local; i++) {
         p = fluid_particle_pointers[i];
-	p->x_prev = p->x;
+    	p->x_prev = p->x;
         p->y_prev = p->y;
-	p->x += (p->v_x * dt);
-        p->y += (p->v_y * dt);
+        float v_x = p->v_x;
+        float v_y = p->v_y;
 
-	// Enforce boundary conditions
+        float dx = v_x*dt;
+        float dy = v_y*dt;
+        // limit shifts if they would push particle out of bounds
+        float boundary_damp_factor = 0.01f;
+        if(p->x + dx < boundary_global->min_x)
+            dx = (boundary_global->min_x - p->x)*boundary_damp_factor;
+        else if(p->x + dx > boundary_global->max_x)
+            dx = (boundary_global->max_x - p->x)*boundary_damp_factor;
+        if(p->y + dy < boundary_global->min_y)
+            dy = (boundary_global->min_y - p->y)*boundary_damp_factor;
+        else if(p->y + dy > boundary_global->max_y)
+            dy = (boundary_global->max_y - p->y)*boundary_damp_factor;
+
+	    p->x += dx;
+        p->y += dy;
+#ifdef DEBUG_PARTICLE7
+        if(i==7)
+            printf("before pos(x/y), after pos(x/y) before vel(x/y): %f/%f, %f/%f, %f/%f\n", p->x_prev, p->y_prev, p->x, p->y, p->v_x, p->v_y);
+#endif
+
+	    // Enforce boundary conditions
         boundaryConditions(p, boundary_global, params);
     }
 }
@@ -574,7 +603,8 @@ void double_density_relaxation(fluid_particle **fluid_particle_pointers, neighbo
         for(j=0; j<n->number_fluid_neighbors; j++) {
 
             q = n->fluid_neighbors[j];
-            r = sqrt((p->x-q->x)*(p->x-q->x) + (p->y-q->y)*(p->y-q->y));
+            float eps2 = 1e-6f;
+            r = sqrt((p->x-q->x)*(p->x-q->x) + (p->y-q->y)*(p->y-q->y) + eps2);
 	        r_recip = 1.0f/r;
 	        ratio = r*h_recip;
 	        OmR = 1.0f - ratio;
@@ -729,17 +759,22 @@ void boundaryConditions(fluid_particle *p, AABB_t *boundary, param *params)
     // Make sure object is not outside boundary
     // The particle must not be equal to boundary max or hash potentially won't pick it up
     // as the particle will in the 'next' after last bin
+    float eps = 0.001f;
     if(p->x < boundary->min_x) {
-        p->x = boundary->min_x;
+        p->x = boundary->min_x + eps;
+        p->v_x = 0.0f;
     }
     else if(p->x > boundary->max_x){
-        p->x = boundary->max_x-0.001f;
+        p->x = boundary->max_x-eps;
+        p->v_x = 0.0f;
     }
     if(p->y <  boundary->min_y) {
-        p->y = boundary->min_y;
+        p->y = boundary->min_y + eps;
+        p->v_y = 0.0f;
     }
     else if(p->y > boundary->max_y){
-        p->y = boundary->max_y-0.001f;
+        p->y = boundary->max_y - eps;
+        p->v_y = 0.0f;
     }
 }
 
