@@ -43,6 +43,6 @@ du=KEY_UP
 dd=KEY_DOWN
 
 [ui-buttonmap]
-guide=exec:/home/tiny/startsph
+guide=exec:/home/tiny/run_sph.sh
 
 # EOF #
