@@ -85,10 +85,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
             case GLFW_KEY_DOWN:
                 move_parameter_down(render_state);
                 break;
-            case GLFW_KEY_LEFT_BRACKET:
+	    case GLFW_KEY_PAGE_DOWN:
                 remove_partition(render_state);
                 break;
-            case GLFW_KEY_RIGHT_BRACKET:
+            case GLFW_KEY_PAGE_UP:
                 add_partition(render_state);
                 break;
             case GLFW_KEY_X:
