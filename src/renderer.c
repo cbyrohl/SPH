@@ -290,7 +290,7 @@ int start_renderer()
             check_partition_left(&render_state, particle_coordinate_counts, coords_recvd);
 
         // Clear background
-        glClearColor(0.15, 0.15, 0.15, 1.0);
+        glClearColor(0.92, 0.92, 0.92, 1.0); // background color
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw background image

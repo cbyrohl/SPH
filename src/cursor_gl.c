@@ -83,8 +83,13 @@ void set_cursor_position(cursor_t *state, float gl_x, float gl_y)
     // For simplicity only single vbo is generated and offset used as needed
 
     // cursor dimensions in gl screen coordinates
+
+    // printf cursor width/height
     float cursor_width = 2.0*(state->cursor_width/(float)state->gl_state->screen_width);
     float cursor_height =  2.0*(state->cursor_height/(float)state->gl_state->screen_height);
+    float aspect_ratio_cursor = (float)state->cursor_width/(float)state->cursor_height;
+    float aspect_ratio_screen = (float)state->gl_state->screen_width/(float)state->gl_state->screen_height;
+    //float cursor_width =
 
     float lower_left_x = gl_x - cursor_width/2.0;
     float lower_left_y = gl_y - cursor_height/2.0;

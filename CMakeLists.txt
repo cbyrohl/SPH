@@ -11,7 +11,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Set the CMake flags (equivalent to CFLAGS)
-set(CMAKE_C_FLAGS "-DGLFW -g -O0 -pg -I/usr/local/include -I/usr/include/libdrm -fcommon")
+set(CMAKE_C_FLAGS "-DGLFW -g -O0 -pg -I/usr/local/include -I/usr/include/libdrm -fcommon -Wimplicit-function-declaration")
 # Set the CMake flags (equivalent to CFLAGS)
 #set(CMAKE_C_FLAGS_DEBUG "-g -O0 -ffast-math -pg -I/usr/local/include -I/usr/include/libdrm -fcommon")
 #set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -I/usr/local/include -I/usr/include/libdrm -fcommon")

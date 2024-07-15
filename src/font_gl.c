@@ -306,7 +306,8 @@ void render_all_text(font_t *state, render_t *render_state, double fps)
 	pressure = render_state->master_params[0].k;
 	elasticity = render_state->master_params[0].k_spring;
 
-	float unselected_color[3] = {1.0f ,1.0f, 1.0f};
+	//float unselected_color[3] = {1.0f , 1.0f, 1.0f};
+	float unselected_color[3] = {0.2f , 0.2f, 0.2f};
 	float selected_color[3]   = {0.1f, 0.80f, 0.43f};  
 	float *color;
 
@@ -315,7 +316,7 @@ void render_all_text(font_t *state, render_t *render_state, double fps)
 
 	// frames per second
 	sprintf( buffer, "FPS: %.0f", fps);
-	n += add_text_coords(state, buffer, verts + n, unselected_color, 1.0f - 100.0f * sx, 1.0f - 50.0f * sy, sx, sy);
+	n += add_text_coords(state, buffer, verts + n, unselected_color, 1.0f - 150.0f * sx, 1.0f - 50.0f * sy, sx, sy);
 
 	// Gravity
 	sprintf( buffer, "Gravity: %.1f", gravity);
@@ -393,7 +394,7 @@ void init_font(font_t *state, int screen_width, int screen_height)
         #endif
 
 	// Set pixel size
-	FT_Set_Pixel_Sizes(state->face, 0, 24);
+	FT_Set_Pixel_Sizes(state->face, 0, 36); // font size
 
 	// Setup OpenGL
 	create_font_program(state);

@@ -52,7 +52,8 @@ THE SOFTWARE.
 
 int main(int argc, char *argv[])
 {
-    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+    //feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+    feraiseexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
     int return_value;
 
     // Initialize MPI
