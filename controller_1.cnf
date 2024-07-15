@@ -14,10 +14,13 @@ dl=150
 dr=150
 
 [ui-axismap]
-x2=REL_WHEEL:5:10
-y2=REL_WHEEL:-5:10
-x1=REL_X:50:20
-y1=REL_Y:-50:20
+x2=REL_WHEEL:1:10
+y2=REL_WHEEL:-1:10
+x1=REL_X:20:20
+y1=REL_Y:-20:20
+
+[axismap]
+-Y1 = Y1
 
 [ui-buttonmap]
 a=KEY_A
@@ -40,6 +43,6 @@ du=KEY_UP
 dd=KEY_DOWN
 
 [ui-buttonmap]
-guide=exec:/home/pi/startsph
+guide=exec:/home/tiny/startsph
 
 # EOF #
