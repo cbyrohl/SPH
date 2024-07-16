@@ -25,6 +25,8 @@ THE SOFTWARE.
 #ifndef fluid_renderer_h
 #define fluid_renderer_h
 
+#define FORCED_COLORS
+
 #include "fluid.h"
 #include "stdbool.h"
 

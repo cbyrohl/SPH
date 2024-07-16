@@ -191,6 +191,24 @@ int start_renderer()
         HSV[2] = 0.8f;
         hsv_to_rgb(HSV, colors_by_rank+3*i);
     }
+#ifdef FORCED_COLORS
+    int idx=0; // first color is on render rank; dont care
+    colors_by_rank[3*idx+0] = 0.011;
+    colors_by_rank[3*idx+1] = 0.560;
+    colors_by_rank[3*idx+2] = 0.988;
+    idx=1;
+    colors_by_rank[3*idx+0] = 0.988;
+    colors_by_rank[3*idx+1] = 0.650;
+    colors_by_rank[3*idx+2] = 0.011;
+    idx=2;
+    colors_by_rank[3*idx+0] = 0.011;
+    colors_by_rank[3*idx+1] = 0.988;
+    colors_by_rank[3*idx+2] = 0.213;
+    idx=3;
+    colors_by_rank[3*idx+0] = 0.988;
+    colors_by_rank[3*idx+1] = 0.180; //224;
+    colors_by_rank[3*idx+2] = 0.011;
+#endif
  
     #if defined LIGHT || defined BLINK1
     MPI_Bcast(colors_by_rank, 3*render_state.num_compute_procs, MPI_FLOAT, 0, MPI_COMM_WORLD);
